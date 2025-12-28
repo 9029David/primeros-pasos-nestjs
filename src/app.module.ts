@@ -14,6 +14,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
         autoLoadEntities: true,
+        migrations: ['dist/migrations/*.js'],
+        migrationsRun: true,
+        // dropSchema: true,
         synchronize: false,
         ssl: {
           rejectUnauthorized: false,

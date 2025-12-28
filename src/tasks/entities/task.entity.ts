@@ -12,6 +12,6 @@ export class Task {
   @Column({ nullable: false })
   description: string;
 
-  @Column({ default: TaskStatus.PENDING })
+  @Column({ type: 'varchar', default: TaskStatus.PENDING })
   status: TaskStatus;
 }
