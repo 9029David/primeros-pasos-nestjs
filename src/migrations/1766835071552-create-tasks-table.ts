@@ -3,6 +3,10 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class CreateTasksTable1766835071552 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
+      DROP TABLE IF EXISTS tasks;
+    `);
+
+    await queryRunner.query(`
       CREATE EXTENSION IF NOT EXISTS "pgcrypto";
     `);
 
