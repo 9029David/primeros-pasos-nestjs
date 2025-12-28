@@ -17,7 +17,7 @@ export class Task {
   @Column({ type: 'varchar', nullable: false })
   description: string;
 
-  @Column({ type: 'varchar', default: TaskStatus.PENDING })
+  @Column({ type: 'varchar', default: TaskStatus.PENDING.toUpperCase() })
   status: TaskStatus;
 
   @CreateDateColumn({ name: 'created_at' })
