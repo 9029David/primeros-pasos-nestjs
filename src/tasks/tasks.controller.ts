@@ -8,6 +8,9 @@ import {
   Delete,
   HttpStatus,
   ParseUUIDPipe,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -23,8 +26,25 @@ export class TasksController {
   }
 
   @Get()
-  async findAll() {
-    return await this.tasksService.findAll();
+  async findAll(
+    @Query(
+      'page',
+      new DefaultValuePipe(1),
+      new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
+      }),
+    )
+    page: number,
+    @Query(
+      'limit',
+      new DefaultValuePipe(5),
+      new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
+      }),
+    )
+    limit: number,
+  ) {
+    return await this.tasksService.findAll(page, limit);
   }
 
   @Get(':id')
