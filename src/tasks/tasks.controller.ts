@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -26,17 +28,42 @@ export class TasksController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
+      }),
+    )
+    id: string,
+  ) {
     return await this.tasksService.findOne(id);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
+  async update(
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
+      }),
+    )
+    id: string,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
     return await this.tasksService.update(id, updateTaskDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
+      }),
+    )
+    id: string,
+  ) {
     return await this.tasksService.remove(id);
   }
 }
