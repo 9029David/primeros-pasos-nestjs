@@ -16,8 +16,59 @@ export class TasksService {
     return newTask;
   }
 
-  async findAll() {
-    return await this.tasksRepository.find();
+  private async findAndCountQb({
+    skip,
+    take,
+  }: {
+    skip: number;
+    take: number;
+  }): Promise<[data: Task[], total: number]> {
+    const queryBuilder = this.tasksRepository
+      .createQueryBuilder('tasks')
+      .orderBy({ created_at: 'DESC' })
+      .skip(skip)
+      .take(take);
+
+    return await queryBuilder.getManyAndCount();
+  }
+
+  private async findAndCountQr({
+    limit,
+    offset,
+  }: {
+    limit: number;
+    offset: number;
+  }) {
+    const data = await this.tasksRepository.query<Task[]>(
+      `
+      SELECT *
+      FROM tasks
+      LIMIT $1 OFFSET $2
+      `,
+      [limit, offset],
+    );
+    const totalResult = await this.tasksRepository.query<{ total: string }[]>(
+      `SELECT COUNT(*) AS total FROM tasks`,
+    );
+    const total = Number(totalResult[0].total);
+
+    return [data, total];
+  }
+
+  async findAll(page: number, limit: number) {
+    const [data, total] = await this.tasksRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      data,
+      meta: {
+        page,
+        limit,
+        total,
+      },
+    };
   }
 
   async findOne(id: string) {
